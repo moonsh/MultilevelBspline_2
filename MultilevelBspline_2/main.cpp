@@ -56,7 +56,8 @@ float s1, t1;
 
 vector <float> xs, ys;
 
-MatrixXf x5, y5, z5, pz2, z5_loca;
+MatrixXf x5, y5, z5, pz1, pz2, z5_loca;
+MatrixXf xc, yc, bsm, tpa,cont;
 
 float zp[32000];
 
@@ -80,6 +81,15 @@ vector<location> l1;
 
 int main(int argc, char* argv[])
 {
+	bsm.resize(4, 4);
+	bsm.setZero();
+	bsm <<  -1, 3, -3, 1, 
+			3, -6, 3, 0,
+			-3, 0, 3, 0,
+			1, 4, 1, 0 ;
+	bsm = bsm / 6.0;
+
+	cout << bsm << endl;
 
 	cout << "Max RMSE  :";
 	cin >> RMSE;
@@ -173,7 +183,7 @@ int main(int argc, char* argv[])
 
 
 	// Assign control points values
-	MatrixXf pz1(n + 3, m + 3);
+	pz1.resize(n + 3, m + 3);
 	controlvalue(wklt, lot, pz1, n, m);
 
 	// ----------------------------------------------------------------------------------------------- 
@@ -208,7 +218,11 @@ int main(int argc, char* argv[])
 		}
 
 		pz1.resize(2 * n + 3, 2 * m + 3);
+		xc.resize(2 * n + 3, 2 * m + 3);
+		yc.resize(2 * n + 3, 2 * m + 3);
 		pz1.setZero();
+		xc.setZero();
+		yc.setZero();
 		controlvalue(wklt, lot, pz1, 2 * n, 2 * m);
 
 		pz1 = pz1 + pz1_1;
@@ -244,6 +258,19 @@ int main(int argc, char* argv[])
 
 
 	// ---------------------------------------------------------Drawing graph-------------------------------------- 
+
+
+	for (oo = 0; oo < xc.cols(); oo = oo + 1)
+	{
+		for (pp = 0; pp < xc.rows(); pp = pp + 1)
+		{
+			xc(pp, oo) = (v*10 * (oo)-v*10);
+			yc(pp, oo) = (v*10 * (pp)-v*10);
+		}
+	}
+
+
+
 
 	for (o = 0; o < (m1 - 0.0001); o = o + v)
 	{
@@ -297,6 +324,11 @@ int main(int argc, char* argv[])
 
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
+	cout << pz1.rows() << endl;
+	cout << pz1.cols() << endl;
+	cout << " m1 " << m1 << endl;
+	cout << " n1 " << n1 << endl;
+
 
 	glutInit(&argc, argv);
 	glutInitWindowSize(1200, 900);
@@ -347,6 +379,25 @@ void display()
 	Triad();
 
 	//glBegin(GL_POINTS);
+
+
+
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_POINTS);
+	glPointSize(2.0);
+	for (oo = 0; oo < xc.cols() ; oo = oo + 1)
+	{
+		for (pp = 0; pp < yc.rows() ; pp = pp + 1)
+		{
+			glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
+
+		}
+	}
+	glEnd();
+
+
+
+
 
 	if (gouraud == false){
 
