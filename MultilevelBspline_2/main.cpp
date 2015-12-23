@@ -218,6 +218,7 @@ int main(int argc, char* argv[])
 		}
 
 		pz1.resize(2 * n + 3, 2 * m + 3);
+		pz2.resize(2 * n + 3, 2 * m + 3);
 		xc.resize(2 * n + 3, 2 * m + 3);
 		yc.resize(2 * n + 3, 2 * m + 3);
 		pz1.setZero();
@@ -226,7 +227,7 @@ int main(int argc, char* argv[])
 		controlvalue(wklt, lot, pz1, 2 * n, 2 * m);
 
 		pz1 = pz1 + pz1_1;
-
+		pz2 = pz1;
 
 		rmse = 0;
 		for (i = 0; i < sn; i = i + 1)
@@ -324,8 +325,7 @@ int main(int argc, char* argv[])
 
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
-	cout << pz1.rows() << endl;
-	cout << pz1.cols() << endl;
+
 	cout << " m1 " << m1 << endl;
 	cout << " n1 " << n1 << endl;
 
@@ -384,15 +384,64 @@ void display()
 
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_POINTS);
-	glPointSize(2.0);
-	for (oo = 0; oo < xc.cols() ; oo = oo + 1)
+	glPointSize(1.0);
+ 
+	//cout << bsm.cols() << endl;
+	for (oo = 0; oo < xc.cols()-3 ; oo = oo + 1)
 	{
-		for (pp = 0; pp < yc.rows() ; pp = pp + 1)
-		{
-			glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
-
+		for (pp = 0; pp < xc.rows() ; pp = pp + 1)
+		{ 
+			for (t = 0; t < 1; t = t + 0.001)
+			{
+				glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
+					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
+					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3));
+		
+			}
 		}
 	}
+
+	for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
+	{
+		for (oo = 0; oo < xc.cols(); oo = oo + 1)
+		{
+	
+			for (t = 0; t < 1; t = t + 0.001)
+			{
+				glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp+1, oo) + basisf(3, t)* xc(pp+2, oo) + basisf(4, t)* xc(pp+3, oo),
+					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp+1, oo ) + basisf(3, t)* yc(pp+2, oo ) + basisf(4, t)* yc(pp+3, oo),
+					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp+1, oo) + basisf(3, t)* pz2(pp+2, oo) + basisf(4, t)* pz2(pp+3, oo));
+
+			}
+		}
+	}
+
+	//glColor3f(1.0, 1.0, 0.0);
+	//glPushAttrib(GL_POINT_BIT);
+	//glPointSize(10.0);
+	//glBegin(GL_POINTS);
+
+	//for (oo = 0; oo < xc.cols(); oo = oo + 1)
+	//{
+	//	for (pp = 0; pp < yc.rows(); pp = pp + 1)
+	//	{
+	//		glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
+
+	//	}
+	//}
+	//glEnd();
+
+	//glPopAttrib();
+
+	//for (oo = 0; oo < xc.cols() ; oo = oo + 1)
+	//{
+	//	for (pp = 0; pp < yc.rows() ; pp = pp + 1)
+	//	{
+	//		glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
+
+	//	}
+	//}
+
 	glEnd();
 
 
@@ -413,11 +462,11 @@ void display()
 			{
 				if (z5(pp, oo)> 0.1)
 				{
-					glBegin(GL_POLYGON);
+	/*				glBegin(GL_POLYGON);
 					glVertex3f(x5(pp, oo), y5(pp, oo), z5(pp, oo));
 					glVertex3f(x5(pp + 1, oo), y5(pp + 1, oo), z5(pp + 1, oo));
 					glVertex3f(x5(pp + 1, oo + 1), y5(pp + 1, oo + 1), z5(pp + 1, oo + 1));
-					glEnd();
+					glEnd();*/
 				}
 
 
@@ -432,19 +481,16 @@ void display()
 			{
 				if (z5(pp, oo)> 0.1)
 				{
-					glBegin(GL_POLYGON);
+	/*				glBegin(GL_POLYGON);
 					glVertex3f(x5(pp, oo), y5(pp, oo), z5(pp, oo));
 					glVertex3f(x5(pp + 1, oo + 1), y5(pp + 1, oo + 1), z5(pp + 1, oo + 1));
 					glVertex3f(x5(pp, oo + 1), y5(pp, oo + 1), z5(pp, oo + 1));
-					glEnd();
+					glEnd();*/
 				}
 
 
 			}
 		}
-
-
-
 
 
 	}
@@ -514,7 +560,7 @@ void SetupRC()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-1, 4, -1, 4, -4.0, 12.0);
+	glOrtho(-1, 3, -1, 3, -4.0, 12.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
