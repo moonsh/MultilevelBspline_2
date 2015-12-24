@@ -138,35 +138,6 @@ void controlvalue(MatrixXf wkl, MatrixXf lot, MatrixXf& pz, int n, int m)
 }
 
 
-float basisf(int i, float t)
-{
-
-	float b = 0;
-
-	if (i == 1)
-	{
-		b = (((1 - t)*(1 - t)*(1 - t)) / 6);
-	}
-
-	if (i == 2)
-	{
-		b = (3 * t*t*t - 6 * t*t + 4) / 6;
-	}
-
-	if (i == 3)
-	{
-		b = (-3 * t*t*t + 3 * t*t + 3 * t + 1) / 6;
-	}
-
-	if (i == 4)
-	{
-		b = (t*t*t) / 6;
-	}
-
-	return b;
-}
-
-
 MatrixXf controlsetlo(float x, float y, float z, int n, int m, int d)
 {
 	int i, j, k, l;

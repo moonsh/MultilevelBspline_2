@@ -50,14 +50,15 @@ bool gouraud = false;
 float n1;  // y range
 float m1;  // x range 
 
-int d2, i, j, k, l, oo, pp, im, in;
+int d2, i, j, k, l, oo, pp, im, in, check;
 float o, p, s, t, d, c, rmse, maxx, maxy, miny, minx, minz;
+float xcp, ycp;
 float s1, t1;
 
 vector <float> xs, ys;
 
-MatrixXf x5, y5, z5, pz1, pz2, z5_loca;
-MatrixXf xc, yc, bsm, tpa,cont;
+MatrixXf x5, y5, z5, pz1, pz2, z5_loca, pz1_loca;
+MatrixXf xc, yc, bsm, tpa,cont,uc,vc;
 
 float zp[32000];
 
@@ -82,6 +83,11 @@ vector<location> l1;
 int main(int argc, char* argv[])
 {
 	bsm.resize(4, 4);
+	uc.resize(1, 4);
+	vc.resize(4, 1);
+
+	uc.setZero();
+	vc.setZero();
 	bsm.setZero();
 	bsm <<  -1, 3, -3, 1, 
 			3, -6, 3, 0,
@@ -89,7 +95,7 @@ int main(int argc, char* argv[])
 			1, 4, 1, 0 ;
 	bsm = bsm / 6.0;
 
-	cout << bsm << endl;
+	
 
 	cout << "Max RMSE  :";
 	cin >> RMSE;
@@ -218,10 +224,13 @@ int main(int argc, char* argv[])
 		}
 
 		pz1.resize(2 * n + 3, 2 * m + 3);
+		pz1_loca.resize(2 * n + 3, 2 * m + 3);
 		pz2.resize(2 * n + 3, 2 * m + 3);
 		xc.resize(2 * n + 3, 2 * m + 3);
 		yc.resize(2 * n + 3, 2 * m + 3);
+
 		pz1.setZero();
+		pz1_loca.setZero();
 		xc.setZero();
 		yc.setZero();
 		controlvalue(wklt, lot, pz1, 2 * n, 2 * m);
@@ -323,6 +332,92 @@ int main(int argc, char* argv[])
 		}
 	}
 
+
+	for (pp = 0; pp < xc.rows(); pp = pp + 1)
+	{
+		for (oo = 0; oo < xc.cols(); oo = oo + 1)
+		{
+			if (pz2(pp, oo) > 0.1)
+			{
+				pz1_loca(pp, oo) = 1;
+			}
+
+
+		}
+	}
+
+
+	check = 1;
+	for (pp = 0; pp < xc.rows(); pp = pp + 1)
+	{
+		for (oo = 0; oo < xc.cols(); oo = oo + 1)
+		{
+			check = 1;
+			if (pz1_loca(pp, oo) == 0)
+			{
+				
+				
+					for (i = oo; i < xc.cols(); i = i + 1)
+					{
+						if ((pz1_loca(pp, i) == 1) && (check == 1))
+						{
+							xcp = xc(pp,i);
+							ycp = pz2(pp,i);
+							check = check + 1;
+						}
+					}
+
+					if (check==2)
+					{ 
+				xc(pp, oo) = xcp;
+				pz2(pp, oo) = ycp;
+					}
+				
+
+			}
+
+			
+		}
+	}
+
+
+
+	for (pp = xc.rows()-1; pp >= 0; pp = pp - 1)
+	{
+		for (oo = xc.cols()-1; oo >= 0; oo = oo - 1)
+		{
+			check = 1;
+			if (pz1_loca(pp, oo) == 0)
+			{
+
+
+				for (i = oo; i >= 0; i = i - 1)
+				{
+					if ((pz1_loca(pp, i) == 1) && (check == 1))
+					{
+						xcp = xc(pp, i);
+						ycp = pz2(pp, i);
+						check = check + 1;
+					}
+				}
+
+				if (check == 2)
+				{
+					xc(pp, oo) = xcp;
+					pz2(pp, oo) = ycp;
+				}
+
+
+			}
+
+
+		}
+	}
+
+
+
+
+
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
 
@@ -387,13 +482,14 @@ void display()
 	glPointSize(1.0);
  
 	//cout << bsm.cols() << endl;
-	for (oo = 0; oo < xc.cols()-3 ; oo = oo + 1)
+	for (oo = 0; oo < xc.cols()-3 ; ++oo)
 	{
-		for (pp = 0; pp < xc.rows() ; pp = pp + 1)
+		for (pp = 0; pp < xc.rows() ; ++pp)
 		{ 
 			for (t = 0; t < 1; t = t + 0.001)
 			{
-				glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
+				glVertex3f(surface(xc, pp, oo, t, 1),
+				//	basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
 					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
 					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3));
 		
@@ -401,7 +497,7 @@ void display()
 		}
 	}
 
-	for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
+	/*for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
 	{
 		for (oo = 0; oo < xc.cols(); oo = oo + 1)
 		{
@@ -415,7 +511,7 @@ void display()
 			}
 		}
 	}
-
+*/
 	//glColor3f(1.0, 1.0, 0.0);
 	//glPushAttrib(GL_POINT_BIT);
 	//glPointSize(10.0);

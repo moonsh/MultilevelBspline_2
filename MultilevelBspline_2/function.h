@@ -28,9 +28,46 @@ struct location{
 
 // test input
 // Point's (x,y,z)  Control lattice's = n,m,d 
-float basisf(int i, float t);
+inline float basisf(int i, float t)
+{
+
+	float b = 0;
+
+	if (i == 1)
+	{
+		b = (((1 - t)*(1 - t)*(1 - t)) / 6);
+	}
+
+	if (i == 2)
+	{
+		b = (3 * t*t*t - 6 * t*t + 4) / 6;
+	}
+
+	if (i == 3)
+	{
+		b = (-3 * t*t*t + 3 * t*t + 3 * t + 1) / 6;
+	}
+
+	if (i == 4)
+	{
+		b = (t*t*t) / 6;
+	}
+
+	return b;
+}
+
 MatrixXf controlsetlo(float x, float y, float z, int n, int m, int d);
 MatrixXf controlsetwkl(float x, float y, float z, int n, int m, int d);
+
+
+inline float surface(MatrixXf xc, int pp, int oo, float u, float v)
+{
+
+	return 	basisf(1, u)* xc(pp, oo) + basisf(2, u)* xc(pp, oo + 1) + basisf(3, u)* xc(pp, oo + 2) + basisf(4, u)* xc(pp, oo + 3);
+
+
+}
+
 
 void refine(MatrixXf cps, MatrixXf & rcps);
 void controlvalue(MatrixXf wkl, MatrixXf lot, MatrixXf& pz, int n, int m);
