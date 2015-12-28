@@ -53,12 +53,12 @@ float m1;  // x range
 int d2, i, j, k, l, oo, pp, im, in, check;
 float o, p, s, t, d, c, rmse, maxx, maxy, miny, minx, minz;
 float xcp, ycp;
-float s1, t1;
+float s1, t1, u1;
 
 vector <float> xs, ys;
 
 MatrixXf x5, y5, z5, pz1, pz2, z5_loca, pz1_loca;
-MatrixXf xc, yc, bsm, tpa,cont,uc,vc;
+MatrixXf xc, yc, bsm, tpa,contx,conty,contz,uc,vc,xcp2,ycp2,zcp2;
 
 float zp[32000];
 
@@ -83,6 +83,12 @@ vector<location> l1;
 int main(int argc, char* argv[])
 {
 	bsm.resize(4, 4);
+	contx.resize(4, 4);
+	conty.resize(4, 4);
+	contz.resize(4, 4);
+	xcp2.resize(1, 1);
+	ycp2.resize(1, 1);
+	zcp2.resize(1, 1);
 	uc.resize(1, 4);
 	vc.resize(4, 1);
 
@@ -375,11 +381,6 @@ int main(int argc, char* argv[])
 				pz2(pp, oo) = ycp;
 					}
 				
-			 /*   	if (check == 1)
-					{
-						xc(pp, oo) = xc(pp+1, oo);
-					}*/
-
 			}
 
 		}
@@ -455,13 +456,14 @@ int main(int argc, char* argv[])
 
 	}
 
-
-
+	cout << cal1(uc, 0.1) << endl;
+	cout << cal2(vc, 0.1) << endl;
 	Filesave2("Data3.obj", pz2, xc, yc, 1);
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
 	cout << " m1 " << pz2.cols() << endl;
 	cout << " n1 " << pz2.rows() << endl;
+
 
 
 	glutInit(&argc, argv);
@@ -516,6 +518,7 @@ void display()
 
 
 
+
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_POINTS);
 	glPointSize(1.0);
@@ -523,32 +526,55 @@ void display()
 	//cout << bsm.cols() << endl;
 	for (oo = 0; oo < xc.cols()-3 ; ++oo)
 	{
-		for (pp = 0; pp < xc.rows() ; ++pp) 
+		for (pp = 0; pp < xc.rows()-3 ; ++pp) 
 		{ 
-			for (t = 0; t < 1; t = t + 0.001)
+
+			for (i = 0; i < 4; i = i + 1)
+
 			{
-					basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
-					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
-					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3);
+				for (j = 0; j < 4; j = j + 1)
+				{
+
+					contx(i, j) = xc(pp + i, oo + j);
+					conty(i, j) = yc(pp + i, oo + j);
+					contz(i, j) = pz2(pp + i, oo + j);
+				}
+
+			}
+
+			for (t = 0; t < 1; t = t + 0.4)
+			{
+
+				for (u1 = 0; u1 < 1; u1 = u1 + 0.4)
+				{ 
+				glVertex3f( (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t))(0, 0),
+							(cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t))(0, 0),
+							(cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0)
+						  );
+			
+				}
+				//glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
+				//	basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
+				//	basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3));
 		
 			}
 		}
 	}
 
-	for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
-	{
-		for (oo = 0; oo < xc.cols(); oo = oo + 1)
-		{
-	
-			for (t = 0; t < 1; t = t + 0.001)
-			{
-				glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp+1, oo) + basisf(3, t)* xc(pp+2, oo) + basisf(4, t)* xc(pp+3, oo),
-					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp+1, oo ) + basisf(3, t)* yc(pp+2, oo ) + basisf(4, t)* yc(pp+3, oo),
-					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp+1, oo) + basisf(3, t)* pz2(pp+2, oo) + basisf(4, t)* pz2(pp+3, oo));
+	//for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
+	//{
+	//	for (oo = 0; oo < xc.cols(); oo = oo + 1)
+	//	{
+	//
+	//		for (t = 0; t < 1; t = t + 0.001)
+	//		{
+	//			glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp+1, oo) + basisf(3, t)* xc(pp+2, oo) + basisf(4, t)* xc(pp+3, oo),
+	//				basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp+1, oo ) + basisf(3, t)* yc(pp+2, oo ) + basisf(4, t)* yc(pp+3, oo),
+	//				basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp+1, oo) + basisf(3, t)* pz2(pp+2, oo) + basisf(4, t)* pz2(pp+3, oo));
 
-			}
-		}
-	}
+	//		}
+	//	}
+	//}
 
 	//glColor3f(1.0, 1.0, 0.0);
 	//glPushAttrib(GL_POINT_BIT);

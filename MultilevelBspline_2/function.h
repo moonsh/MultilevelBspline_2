@@ -65,8 +65,27 @@ inline float surface(MatrixXf xc, int pp, int oo, float u, float v)
 
 	return 	basisf(1, u)* xc(pp, oo) + basisf(2, u)* xc(pp, oo + 1) + basisf(3, u)* xc(pp, oo + 2) + basisf(4, u)* xc(pp, oo + 3);
 
-
 }
+
+
+inline MatrixXf cal1(MatrixXf t, float u)
+{
+	t(0, 0) = u*u*u;
+	t(0, 1) = u*u;
+	t(0, 2) = u;
+	t(0, 3) = 1;
+	return t;
+}
+
+inline MatrixXf cal2(MatrixXf t, float u)
+{
+	t(0, 0) = u*u*u;
+	t(1, 0) = u*u;
+	t(2, 0) = u;
+	t(3, 0) = 1;
+	return t;
+}
+
 
 
 void refine(MatrixXf cps, MatrixXf & rcps);
