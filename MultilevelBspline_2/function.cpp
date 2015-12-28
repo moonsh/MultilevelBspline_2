@@ -341,46 +341,14 @@ float Filesave3(char *filename, vector<location> points_1, MatrixXf contpz, Matr
 float Filesave2(char *filename, MatrixXf contpz, MatrixXf contpx, MatrixXf contpy, float value)
 {
 	ofstream outfile(filename);
-	int facenumber1;
-	facenumber1 = 1;
-	for (int j = 0; j<contpz.rows() - 1; j++)
+
+	for (int j = 0; j<contpz.rows() ; j++)
 	{
-		for (int i = 0; i < contpz.cols() - 1; i++)
+		for (int i = 0; i < contpz.cols() ; i++)
 		{
-			if ((contpz(j, i) > value) && (contpz(j + 1, i + 1) > value) && (contpz(j, i + 1) > value) && (contpz(j + 1, i) > value))
-			{
-
-
 				outfile << "v " << contpx(j, i) << " " << contpy(j, i) << " " << contpz(j, i) << endl;
-				outfile << "v " << contpx(j + 1, i + 1) << " " << contpy(j + 1, i + 1) << " " << contpz(j + 1, i + 1) << endl;
-				outfile << "v " << contpx(j + 1, i) << " " << contpy(j + 1, i) << " " << contpz(j + 1, i) << endl;
-				outfile << "f " << facenumber1 << " " << facenumber1 + 1 << " " << facenumber1 + 2 << endl;
-
-				facenumber1 = facenumber1 + 3;
-			}
 		}
 	}
-
-
-	for (int j = 0; j<contpz.rows() - 1; j++)
-	{
-		for (int i = 0; i < contpz.cols() - 1; i++)
-		{
-			if ((contpz(j, i) > value) && (contpz(j + 1, i + 1) > value) && (contpz(j, i + 1) > value) && (contpz(j + 1, i) > value))
-			{
-
-
-				outfile << "v " << contpx(j, i) << " " << contpy(j, i) << " " << contpz(j, i) << endl;
-				outfile << "v " << contpx(j, i + 1) << " " << contpy(j, i + 1) << " " << contpz(j, i + 1) << endl;
-				outfile << "v " << contpx(j + 1, i + 1) << " " << contpy(j + 1, i + 1) << " " << contpz(j + 1, i + 1) << endl;
-				outfile << "f " << facenumber1 << " " << facenumber1 + 1 << " " << facenumber1 + 2 << endl;
-
-				facenumber1 = facenumber1 + 3;
-			}
-		}
-	}
-
-
 
 	outfile.close();
 	return 0;

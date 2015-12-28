@@ -347,6 +347,8 @@ int main(int argc, char* argv[])
 	}
 
 
+
+
 	check = 1;
 	for (pp = 0; pp < xc.rows(); pp = pp + 1)
 	{
@@ -373,10 +375,13 @@ int main(int argc, char* argv[])
 				pz2(pp, oo) = ycp;
 					}
 				
+			 /*   	if (check == 1)
+					{
+						xc(pp, oo) = xc(pp+1, oo);
+					}*/
 
 			}
 
-			
 		}
 	}
 
@@ -407,9 +412,7 @@ int main(int argc, char* argv[])
 					pz2(pp, oo) = ycp;
 				}
 
-
 			}
-
 
 		}
 	}
@@ -417,12 +420,48 @@ int main(int argc, char* argv[])
 
 
 
+	for (pp = xc.rows() - 1; pp >= 0; pp = pp - 1)
+	{
+		check = 1;
 
+		for (oo = 0; oo < xc.cols(); oo = oo + 1)
+		{
+			if (pz1_loca(pp, oo) == 0)
+			{
+
+				for (i = oo; i < xc.cols(); i = i + 1)
+				{
+					if ((pz1_loca(pp, i) == 1) && (check == 1))
+					{
+
+						check = check + 1;
+					}
+				}
+			}
+
+
+		}
+
+		if (check == 1)
+		{
+			for (oo = 0; oo < xc.cols(); oo = oo + 1)
+			{
+				xc(pp, oo) = xc(pp + 1, oo);
+				yc(pp, oo) = yc(pp + 1, oo);
+				pz2(pp, oo) = pz2(pp + 1, oo);
+			}
+		}
+
+
+	}
+
+
+
+	Filesave2("Data3.obj", pz2, xc, yc, 1);
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
-
-	cout << " m1 " << m1 << endl;
-	cout << " n1 " << n1 << endl;
+	cout << " m1 " << pz2.cols() << endl;
+	cout << " n1 " << pz2.rows() << endl;
 
 
 	glutInit(&argc, argv);
@@ -484,20 +523,19 @@ void display()
 	//cout << bsm.cols() << endl;
 	for (oo = 0; oo < xc.cols()-3 ; ++oo)
 	{
-		for (pp = 0; pp < xc.rows() ; ++pp)
+		for (pp = 0; pp < xc.rows() ; ++pp) 
 		{ 
 			for (t = 0; t < 1; t = t + 0.001)
 			{
-				glVertex3f(surface(xc, pp, oo, t, 1),
-				//	basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
+					basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
 					basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
-					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3));
+					basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3);
 		
 			}
 		}
 	}
 
-	/*for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
+	for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
 	{
 		for (oo = 0; oo < xc.cols(); oo = oo + 1)
 		{
@@ -511,7 +549,7 @@ void display()
 			}
 		}
 	}
-*/
+
 	//glColor3f(1.0, 1.0, 0.0);
 	//glPushAttrib(GL_POINT_BIT);
 	//glPointSize(10.0);
