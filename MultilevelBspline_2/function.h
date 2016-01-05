@@ -30,30 +30,37 @@ struct location{
 // Point's (x,y,z)  Control lattice's = n,m,d 
 inline float basisf(int i, float t)
 {
-
 	float b = 0;
-
 	if (i == 1)
-	{
-		b = (((1 - t)*(1 - t)*(1 - t)) / 6);
-	}
-
+	{	b = (((1 - t)*(1 - t)*(1 - t)) / 6);	}
 	if (i == 2)
-	{
-		b = (3 * t*t*t - 6 * t*t + 4) / 6;
-	}
-
+	{	b = (3 * t*t*t - 6 * t*t + 4) / 6;}
 	if (i == 3)
-	{
-		b = (-3 * t*t*t + 3 * t*t + 3 * t + 1) / 6;
-	}
-
+	{	b = (-3 * t*t*t + 3 * t*t + 3 * t + 1) / 6;}
 	if (i == 4)
-	{
-		b = (t*t*t) / 6;
-	}
-
+	{	b = (t*t*t) / 6;	}
 	return b;
+}
+
+inline float basisf2(int i, float t)
+{
+	float b = 0;
+	if (i == 1)
+	{	b = (((1 - t)*(1 - t))*(-1) / 2);	}
+	if (i == 2)
+	{	b = (9 * t*t - 4 * t ) / 2;}
+	if (i == 3)
+	{	b = (-3 * t*t + 2 * t + 1  ) / 2;}
+	if (i == 4)
+	{	b = 3*(t*t) / 2;	}
+	return b;
+}
+
+inline float crossproduct(float x1, float y1, float z1, float x2, float y2, float z2)
+{
+	float rx = y1*z1 - z1*y1;
+	float ry = -(x1*z2 - z1*x2);
+	float rz = -(x1*y2) - (y1*x1);
 }
 
 MatrixXf controlsetlo(float x, float y, float z, int n, int m, int d);

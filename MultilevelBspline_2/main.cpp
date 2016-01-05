@@ -507,10 +507,6 @@ void display()
 	glRotatef(gRot[1], 0.0, 1.0, 0.0);
 
 
-	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_NORMALIZE);
 
 	Triad();
 
@@ -518,11 +514,12 @@ void display()
 
 
 
-
 	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_POINTS);
 	glPointSize(1.0);
- 
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_DEPTH_TEST);
 	//cout << bsm.cols() << endl;
 	for (oo = 0; oo < xc.cols()-3 ; ++oo)
 	{
@@ -542,118 +539,60 @@ void display()
 
 			}
 
-			for (t = 0; t < 1; t = t + 0.4)
+			for (t = 0; t < 1; t = t + 0.25)
 			{
 
-				for (u1 = 0; u1 < 1; u1 = u1 + 0.4)
+				for (u1 = 0; u1 < 1; u1 = u1 + 0.25)
 				{ 
-				glVertex3f( (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t))(0, 0),
-							(cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t))(0, 0),
-							(cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0)
-						  );
+					glBegin(GL_POLYGON);
+
+					glNormal3f(
+						((cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)) * ((cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))
+						- ((cal1(uc, u1 + 0.5)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)) * ((cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)),
+						
+						((cal1(uc, u1 + 0.5)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)) * ((cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))
+						- ((cal1(uc, u1 + 0.5)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))* ((cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)),
+
+						((cal1(uc, u1 + 0.5)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))* ((cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0,0))
+						- ((cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)) * ((cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))
+
+
+						);
+
+
+					glVertex3f( (cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t))(0, 0),
+								(cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t))(0, 0),
+								(cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0)
+							  );
+
+					glVertex3f((cal1(uc, u1)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0),
+						(cal1(uc, u1)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0),
+						(cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)
+						);
+
+
+					glVertex3f((cal1(uc, u1 + 0.5)*bsm*contx *bsm.transpose() * cal2(vc, t + 0.5))(0, 0),
+						(cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0),
+						(cal1(uc, u1 + 0.5)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)
+						);
+
+					glVertex3f((cal1(uc, u1+0.5)*bsm*contx *bsm.transpose() * cal2(vc, t ))(0, 0),
+						(cal1(uc, u1+0.5)*bsm*conty *bsm.transpose() * cal2(vc, t ))(0, 0),
+						(cal1(uc, u1+0.5)*bsm*contz *bsm.transpose() * cal2(vc, t ))(0, 0)
+						);
+					
+
+
+					glEnd();
 			
 				}
-				//glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp, oo + 1) + basisf(3, t)* xc(pp, oo + 2) + basisf(4, t)* xc(pp, oo + 3),
-				//	basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp, oo + 1) + basisf(3, t)* yc(pp, oo + 2) + basisf(4, t)* yc(pp, oo + 3),
-				//	basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp, oo + 1) + basisf(3, t)* pz2(pp, oo + 2) + basisf(4, t)* pz2(pp, oo+3));
-		
+
+
 			}
 		}
 	}
 
-	//for (pp = 0; pp < xc.rows()-3; pp = pp + 1)
-	//{
-	//	for (oo = 0; oo < xc.cols(); oo = oo + 1)
-	//	{
-	//
-	//		for (t = 0; t < 1; t = t + 0.001)
-	//		{
-	//			glVertex3f(basisf(1, t)* xc(pp, oo) + basisf(2, t)* xc(pp+1, oo) + basisf(3, t)* xc(pp+2, oo) + basisf(4, t)* xc(pp+3, oo),
-	//				basisf(1, t)* yc(pp, oo) + basisf(2, t)* yc(pp+1, oo ) + basisf(3, t)* yc(pp+2, oo ) + basisf(4, t)* yc(pp+3, oo),
-	//				basisf(1, t)* pz2(pp, oo) + basisf(2, t)* pz2(pp+1, oo) + basisf(3, t)* pz2(pp+2, oo) + basisf(4, t)* pz2(pp+3, oo));
-
-	//		}
-	//	}
-	//}
-
-	//glColor3f(1.0, 1.0, 0.0);
-	//glPushAttrib(GL_POINT_BIT);
-	//glPointSize(10.0);
-	//glBegin(GL_POINTS);
-
-	//for (oo = 0; oo < xc.cols(); oo = oo + 1)
-	//{
-	//	for (pp = 0; pp < yc.rows(); pp = pp + 1)
-	//	{
-	//		glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
-
-	//	}
-	//}
-	//glEnd();
-
-	//glPopAttrib();
-
-	//for (oo = 0; oo < xc.cols() ; oo = oo + 1)
-	//{
-	//	for (pp = 0; pp < yc.rows() ; pp = pp + 1)
-	//	{
-	//		glVertex3f(xc(pp, oo), yc(pp, oo), pz1(pp, oo));
-
-	//	}
-	//}
-
-	glEnd();
-
-
-
-
-
-	if (gouraud == false){
-
-		glDisable(GL_LIGHTING);
-		glDisable(GL_LIGHT0);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_NORMALIZE);
-
-		glColor3f(1.0, 0.0, 0.0);
-		for (oo = 0; oo < xs.size() - 1; oo = oo + 1)
-		{
-			for (pp = 0; pp < ys.size() - 1; pp = pp + 1)
-			{
-				if (z5(pp, oo)> 0.1)
-				{
-	/*				glBegin(GL_POLYGON);
-					glVertex3f(x5(pp, oo), y5(pp, oo), z5(pp, oo));
-					glVertex3f(x5(pp + 1, oo), y5(pp + 1, oo), z5(pp + 1, oo));
-					glVertex3f(x5(pp + 1, oo + 1), y5(pp + 1, oo + 1), z5(pp + 1, oo + 1));
-					glEnd();*/
-				}
-
-
-			}
-		}
-
-
-		glColor3f(0.0, 0.0, 1.0);
-		for (oo = 0; oo < xs.size() - 1; oo = oo + 1)
-		{
-			for (pp = 0; pp < ys.size() - 1; pp = pp + 1)
-			{
-				if (z5(pp, oo)> 0.1)
-				{
-	/*				glBegin(GL_POLYGON);
-					glVertex3f(x5(pp, oo), y5(pp, oo), z5(pp, oo));
-					glVertex3f(x5(pp + 1, oo + 1), y5(pp + 1, oo + 1), z5(pp + 1, oo + 1));
-					glVertex3f(x5(pp, oo + 1), y5(pp, oo + 1), z5(pp, oo + 1));
-					glEnd();*/
-				}
-
-
-			}
-		}
-
-
-	}
+	
 
 	if (gouraud)
 	{
