@@ -305,7 +305,7 @@ float Filesave3(char *filename, vector<location> points_1, MatrixXf contpz, Matr
 
 	for (int j = 0; j<points_1.size(); j++)
 	{
-		outfile << "v " << New(0, j) << " " << New(1, j) << " " << New(2, j) << endl;
+		outfile << "v " << New(0, j)*100-84.7441-0.1 << " " << -(New(1, j)*100-50.9349-0.1) << " " << -(New(2, j)*100-1713.4) << endl;
 	}
 
 	for (int j = 0; j< contpz.rows() - 1; j++)

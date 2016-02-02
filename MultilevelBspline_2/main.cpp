@@ -39,7 +39,7 @@ int n;  // y range
 int m;  // x range 
 
 int d1 = 10;  // x,y resolution   control set #1
-float v = 0.005;  // parameter interval 
+float v = 0.0025;  // parameter interval 
 float RMSE;
 int latticen = 2;
 
@@ -60,7 +60,7 @@ vector <float> xs, ys;
 MatrixXf x5, y5, z5, pz1, pz2, z5_loca, pz1_loca;
 MatrixXf xc, yc, bsm, tpa,contx,conty,contz,uc,vc,xcp2,ycp2,zcp2;
 
-float zp[32000];
+float zp[280000];
 
 float XUP[3] = { 1, 0, 0 }, XUN[3] = { -1, 0, 0 },
 YUP[3] = { 0, 1, 0 }, YUN[3] = { 0, -1, 0 },
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 	cout << " data loading " << endl;
 
 
-	Fileload("Result1.obj", points_1);
+	Fileload("Result134.obj", points_1);
 	cout << " data loaded " << endl;
 
 	sn = points_1.size();
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 
 	for (i = 0; i < sn; i = i + 1)
 	{
-		points_1.at(i).zpos = points_1.at(i).zpos - minz;
+		points_1.at(i).zpos = points_1.at(i).zpos - 0.0;
 	}
 
 
@@ -280,8 +280,8 @@ int main(int argc, char* argv[])
 	{
 		for (pp = 0; pp < xc.rows(); pp = pp + 1)
 		{
-			xc(pp, oo) = (v*10 * (oo)-v*10);
-			yc(pp, oo) = (v*10 * (pp)-v*10);
+			xc(pp, oo) = (v*5 * (oo)-v*5);
+			yc(pp, oo) = (v*5 * (pp)-v*5);
 		}
 	}
 
@@ -378,7 +378,7 @@ int main(int argc, char* argv[])
 					if (check==2)
 					{ 
 				xc(pp, oo) = xcp;
-				pz2(pp, oo) = ycp;
+				pz2(pp, oo) = 0.01;
 					}
 				
 			}
@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
 				if (check == 2)
 				{
 					xc(pp, oo) = xcp;
-					pz2(pp, oo) = ycp;
+					pz2(pp, oo) = 0.01;
 				}
 
 			}
@@ -449,7 +449,8 @@ int main(int argc, char* argv[])
 			{
 				xc(pp, oo) = xc(pp + 1, oo);
 				yc(pp, oo) = yc(pp + 1, oo);
-				pz2(pp, oo) = pz2(pp + 1, oo);
+				pz2(pp, oo) = 0.01;
+//				pz2(pp, oo) = pz2(pp + 1, oo);
 			}
 		}
 
@@ -458,7 +459,7 @@ int main(int argc, char* argv[])
 
 	cout << cal1(uc, 0.1) << endl;
 	cout << cal2(vc, 0.1) << endl;
-	Filesave2("Data3.obj", pz2, xc, yc, 1);
+	//Filesave2("Data3.obj", pz2, xc, yc, 1);
 	Filesave3("Data2.obj", l1, z5, z5_loca, 0.1);
 
 	cout << " m1 " << pz2.cols() << endl;
@@ -544,7 +545,7 @@ void display()
 
 				for (u1 = 0; u1 < 1; u1 = u1 + 0.25)
 				{ 
-					glBegin(GL_POLYGON);
+		/*			glBegin(GL_POLYGON);
 
 					glNormal3f(
 						((cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0) - (cal1(uc, u1 + 0.5)*bsm*conty *bsm.transpose() * cal2(vc, t + 0.5))(0, 0)) * ((cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t))(0, 0) - (cal1(uc, u1)*bsm*contz *bsm.transpose() * cal2(vc, t + 0.5))(0, 0))
@@ -583,7 +584,7 @@ void display()
 					
 
 
-					glEnd();
+					glEnd();*/
 			
 				}
 
